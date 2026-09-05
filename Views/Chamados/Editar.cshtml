@@ -1,0 +1,46 @@
+@model HelpDeskWeb.Models.Chamado
+
+<h1>Editar Chamado</h1>
+
+<form asp-action="Editar" method="post">
+
+    <input type="hidden" asp-for="Id" />
+
+    <div class="mb-3">
+        <label>Título</label>
+        <input asp-for="Titulo" class="form-control" />
+    </div>
+
+    <div class="mb-3">
+        <label>Descrição</label>
+        <textarea asp-for="Descricao" class="form-control"></textarea>
+    </div>
+
+    <div class="mb-3">
+        <label>Prioridade</label>
+        <select asp-for="Prioridade" class="form-control">
+            <option>Baixa</option>
+            <option>Média</option>
+            <option>Alta</option>
+            <option>Crítica</option>
+        </select>
+    </div>
+
+    <div class="mb-3">
+        <label>Status</label>
+        <select asp-for="Status" class="form-control">
+            <option>Aberto</option>
+            <option>Em atendimento</option>
+            <option>Resolvido</option>
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-success">
+        Salvar Alterações
+    </button>
+
+    <a asp-action="Index" class="btn btn-secondary">
+        Cancelar
+    </a>
+
+</form>

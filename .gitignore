@@ -1,0 +1,23 @@
+# Build
+bin/
+obj/
+
+# Banco local
+*.db
+*.db-shm
+*.db-wal
+
+# Configurações locais
+appsettings.Development.json
+
+# IDEs
+.vscode/
+.vs/
+.idea/
+
+# Sistema
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log

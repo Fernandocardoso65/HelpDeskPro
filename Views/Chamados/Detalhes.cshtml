@@ -1,0 +1,316 @@
+@model HelpDeskWeb.Models.Chamado
+@using HelpDeskWeb.Models
+
+@{
+    ViewData["Title"] = "Detalhes do Chamado";
+
+    var interacoes =
+        ViewBag.Interacoes as List<InteracaoChamado>
+        ?? new List<InteracaoChamado>();
+}
+
+<h1 class="mb-4">Detalhes do Chamado</h1>
+
+<div class="card shadow-sm mb-4">
+    <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0">@Model.Titulo</h3>
+
+            <span class="badge bg-secondary">
+                #@Model.Id
+            </span>
+        </div>
+
+        <hr />
+
+        <p>
+            <strong>Descrição:</strong><br />
+            @Model.Descricao
+        </p>
+
+        <p>
+            <strong>Aberto por:</strong><br />
+
+            @if (!string.IsNullOrEmpty(Model.UsuarioEmail))
+            {
+                @Model.UsuarioEmail
+            }
+            else
+            {
+                <span class="text-muted">
+                    Chamado antigo / usuário não identificado
+                </span>
+            }
+        </p>
+
+        <p>
+            <strong>Técnico responsável:</strong><br />
+
+            @if (!string.IsNullOrEmpty(Model.TecnicoEmail))
+            {
+                @Model.TecnicoEmail
+            }
+            else
+            {
+                <span class="text-muted">
+                    Ainda não atribuído
+                </span>
+            }
+        </p>
+
+        <p>
+            <strong>Status:</strong>
+
+            @if (Model.Status == "Aberto")
+            {
+                <span class="badge bg-primary">
+                    Aberto
+                </span>
+            }
+            else if (Model.Status == "Em atendimento")
+            {
+                <span class="badge bg-warning text-dark">
+                    Em atendimento
+                </span>
+            }
+            else if (Model.Status == "Resolvido")
+            {
+                <span class="badge bg-success">
+                    Resolvido
+                </span>
+            }
+            else
+            {
+                <span class="badge bg-secondary">
+                    @Model.Status
+                </span>
+            }
+        </p>
+
+        <p>
+            <strong>Prioridade:</strong>
+
+            @if (Model.Prioridade == "Crítica")
+            {
+                <span class="badge bg-danger">
+                    Crítica
+                </span>
+            }
+            else if (Model.Prioridade == "Alta")
+            {
+                <span class="badge bg-warning text-dark">
+                    Alta
+                </span>
+            }
+            else if (Model.Prioridade == "Média")
+            {
+                <span class="badge bg-info text-dark">
+                    Média
+                </span>
+            }
+            else
+            {
+                <span class="badge bg-secondary">
+                    Baixa
+                </span>
+            }
+        </p>
+
+        <p>
+            <strong>Data de abertura:</strong><br />
+            @Model.DataAbertura.ToString("dd/MM/yyyy HH:mm")
+        </p>
+
+        @if (!string.IsNullOrEmpty(Model.Solucao))
+        {
+            <hr />
+
+            <div class="alert alert-success">
+
+                <h5 class="alert-heading">
+                    Solução técnica
+                </h5>
+
+                <p class="mb-2"
+                   style="white-space: pre-line;">@Model.Solucao</p>
+
+                @if (Model.DataConclusao.HasValue)
+                {
+                    <hr />
+
+                    <small>
+                        <strong>Concluído em:</strong>
+                        @Model.DataConclusao.Value.ToString("dd/MM/yyyy HH:mm")
+                    </small>
+                }
+
+            </div>
+        }
+
+        <hr />
+
+        <a asp-action="Index"
+           class="btn btn-secondary">
+            Voltar
+        </a>
+
+        @if (User.IsInRole("Administrador"))
+        {
+            <a asp-action="Editar"
+               asp-route-id="@Model.Id"
+               class="btn btn-warning">
+                Editar
+            </a>
+
+            <a asp-action="Atribuir"
+               asp-route-id="@Model.Id"
+               class="btn btn-primary">
+
+                @(string.IsNullOrEmpty(Model.TecnicoEmail)
+                    ? "Atribuir técnico"
+                    : "Reatribuir técnico")
+
+            </a>
+        }
+        else if (User.IsInRole("Tecnico"))
+        {
+            <a asp-action="Atender"
+               asp-route-id="@Model.Id"
+               class="btn btn-warning">
+                Atualizar atendimento
+            </a>
+        }
+        else if (User.IsInRole("Usuario") &&
+                 Model.Status != "Resolvido")
+        {
+            <a asp-action="Editar"
+               asp-route-id="@Model.Id"
+               class="btn btn-warning">
+                Editar chamado
+            </a>
+        }
+
+    </div>
+</div>
+
+
+<div class="card shadow-sm mb-4">
+
+    <div class="card-header">
+        <strong>
+            Histórico do chamado
+        </strong>
+    </div>
+
+    <div class="card-body">
+
+        @if (interacoes.Count == 0)
+        {
+            <div class="text-muted">
+                Ainda não existem interações neste chamado.
+            </div>
+        }
+        else
+        {
+            foreach (var interacao in interacoes)
+            {
+                <div class="border rounded p-3 mb-3">
+
+                    <div class="d-flex justify-content-between mb-2">
+
+                        <div>
+                            <strong>
+                                @interacao.UsuarioEmail
+                            </strong>
+
+                            @if (interacao.Perfil == "Administrador")
+                            {
+                                <span class="badge bg-danger ms-2">
+                                    Administrador
+                                </span>
+                            }
+                            else if (interacao.Perfil == "Tecnico")
+                            {
+                                <span class="badge bg-warning text-dark ms-2">
+                                    Técnico
+                                </span>
+                            }
+                            else
+                            {
+                                <span class="badge bg-primary ms-2">
+                                    Usuário
+                                </span>
+                            }
+
+                        </div>
+
+                        <small class="text-muted">
+                            @interacao.Data.ToString("dd/MM/yyyy HH:mm")
+                        </small>
+
+                    </div>
+
+                    <div style="white-space: pre-line;">@interacao.Mensagem</div>
+
+                </div>
+            }
+        }
+
+    </div>
+
+</div>
+
+
+@if (Model.Status != "Resolvido")
+{
+    <div class="card shadow-sm">
+
+        <div class="card-header">
+            <strong>
+                Nova interação
+            </strong>
+        </div>
+
+        <div class="card-body">
+
+            <form asp-action="AdicionarInteracao"
+                  method="post">
+
+                @Html.AntiForgeryToken()
+
+                <input type="hidden"
+                       name="chamadoId"
+                       value="@Model.Id" />
+
+                <div class="mb-3">
+
+                    <label class="form-label">
+                        Mensagem
+                    </label>
+
+                    <textarea name="mensagem"
+                              class="form-control"
+                              rows="4"
+                              required
+                              placeholder="Digite uma mensagem sobre o chamado..."></textarea>
+
+                </div>
+
+                <button type="submit"
+                        class="btn btn-primary">
+                    Enviar mensagem
+                </button>
+
+            </form>
+
+        </div>
+
+    </div>
+}
+else
+{
+    <div class="alert alert-secondary">
+        Este chamado foi resolvido e não aceita novas interações.
+    </div>
+}

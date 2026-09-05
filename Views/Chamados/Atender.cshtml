@@ -1,0 +1,122 @@
+@model HelpDeskWeb.Models.Chamado
+
+@{
+    ViewData["Title"] = "Atender Chamado";
+}
+
+<h1 class="mb-4">Atender Chamado</h1>
+
+<div class="card shadow-sm">
+    <div class="card-body">
+
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h3 class="mb-0">@Model.Titulo</h3>
+
+            <span class="badge bg-secondary">
+                #@Model.Id
+            </span>
+        </div>
+
+        <hr />
+
+        <p>
+            <strong>Descrição do usuário:</strong><br />
+            @Model.Descricao
+        </p>
+
+        <p>
+            <strong>Aberto por:</strong><br />
+            @Model.UsuarioEmail
+        </p>
+
+        <p>
+            <strong>Técnico responsável:</strong><br />
+            @Model.TecnicoEmail
+        </p>
+
+        <p>
+            <strong>Prioridade:</strong>
+            @Model.Prioridade
+        </p>
+
+        <hr />
+
+        <form asp-action="Atender"
+              method="post">
+
+            @Html.AntiForgeryToken()
+
+            <input type="hidden"
+                   name="id"
+                   value="@Model.Id" />
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Status do atendimento
+                </label>
+
+                <select name="status"
+                        class="form-select"
+                        required>
+
+                    @if (Model.Status == "Em atendimento")
+                    {
+                        <option value="Em atendimento"
+                                selected>
+                            Em atendimento
+                        </option>
+                    }
+                    else
+                    {
+                        <option value="Em atendimento">
+                            Em atendimento
+                        </option>
+                    }
+
+                    @if (Model.Status == "Resolvido")
+                    {
+                        <option value="Resolvido"
+                                selected>
+                            Resolvido
+                        </option>
+                    }
+                    else
+                    {
+                        <option value="Resolvido">
+                            Resolvido
+                        </option>
+                    }
+
+                </select>
+
+            </div>
+
+            <div class="mb-3">
+
+                <label class="form-label">
+                    Solução / observação técnica
+                </label>
+
+                <textarea name="solucao"
+                          class="form-control"
+                          rows="6"
+                          placeholder="Descreva o diagnóstico, procedimento realizado e solução...">@Model.Solucao</textarea>
+
+            </div>
+
+            <button type="submit"
+                    class="btn btn-success">
+                Salvar atendimento
+            </button>
+
+            <a asp-action="Detalhes"
+               asp-route-id="@Model.Id"
+               class="btn btn-secondary">
+                Cancelar
+            </a>
+
+        </form>
+
+    </div>
+</div>

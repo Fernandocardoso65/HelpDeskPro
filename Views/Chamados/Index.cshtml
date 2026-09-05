@@ -1,0 +1,128 @@
+@model List<HelpDeskWeb.Models.Chamado>
+
+@{
+    var abertos = Model.Count(c => c.Status == "Aberto");
+    var atendimento = Model.Count(c => c.Status == "Em atendimento");
+    var resolvidos = Model.Count(c => c.Status == "Resolvido");
+    var criticos = Model.Count(c => c.Prioridade == "Crítica");
+}
+
+<h1 class="mb-4">Dashboard Help Desk</h1>
+
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Abertos</h5>
+                <h2>@abertos</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Em atendimento</h5>
+                <h2>@atendimento</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Resolvidos</h5>
+                <h2>@resolvidos</h2>
+            </div>
+        </div>
+    </div>
+
+    <div class="col-md-3">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h5>Críticos</h5>
+                <h2>@criticos</h2>
+            </div>
+        </div>
+    </div>
+</div>
+
+<a asp-action="Criar" class="btn btn-primary mb-3">
+    + Novo Chamado
+</a>
+
+<table class="table table-hover table-bordered align-middle">
+    <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Título</th>
+            <th>Status</th>
+            <th>Prioridade</th>
+            <th>Ações</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        @foreach (var chamado in Model)
+        {
+            <tr>
+                <td>#@chamado.Id</td>
+                <td>@chamado.Titulo</td>
+
+                <td>
+                    @if (chamado.Status == "Aberto")
+                    {
+                        <span class="badge bg-primary">Aberto</span>
+                    }
+                    else if (chamado.Status == "Em atendimento")
+                    {
+                        <span class="badge bg-warning text-dark">Em atendimento</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-success">Resolvido</span>
+                    }
+                </td>
+
+                <td>
+                    @if (chamado.Prioridade == "Crítica")
+                    {
+                        <span class="badge bg-danger">Crítica</span>
+                    }
+                    else if (chamado.Prioridade == "Alta")
+                    {
+                        <span class="badge bg-warning text-dark">Alta</span>
+                    }
+                    else if (chamado.Prioridade == "Média")
+                    {
+                        <span class="badge bg-info text-dark">Média</span>
+                    }
+                    else
+                    {
+                        <span class="badge bg-secondary">Baixa</span>
+                    }
+                </td>
+
+                <td>
+                    <a asp-action="Detalhes"
+                       asp-route-id="@chamado.Id"
+                       class="btn btn-sm btn-info">
+                        Detalhes
+                    </a>
+
+                    <a asp-action="Editar"
+                       asp-route-id="@chamado.Id"
+                       class="btn btn-sm btn-warning">
+                        Editar
+                    </a>
+
+                    <a asp-action="Excluir"
+                       asp-route-id="@chamado.Id"
+                       class="btn btn-sm btn-danger">
+                        Excluir
+                    </a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
