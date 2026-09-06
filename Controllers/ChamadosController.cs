@@ -22,7 +22,10 @@ namespace HelpDeskWeb.Controllers
         }
 
         // LISTAR CHAMADOS
-        public async Task<IActionResult> Index()
+        public async Task<IActionResult> Index(
+            string? status,
+            string? prioridade,
+            string? busca)
         {
             var usuario = await _userManager.GetUserAsync(User);
 
@@ -31,31 +34,71 @@ namespace HelpDeskWeb.Controllers
                 return Challenge();
             }
 
-            if (User.IsInRole("Administrador"))
-            {
-                var todosChamados = _context.Chamados
-                    .OrderByDescending(c => c.DataAbertura)
-                    .ToList();
+            var query = _context.Chamados.AsQueryable();
 
-                return View(todosChamados);
-            }
-
+            // REGRA DE ACESSO
             if (User.IsInRole("Tecnico"))
             {
-                var chamadosTecnico = _context.Chamados
-                    .Where(c => c.TecnicoId == usuario.Id)
-                    .OrderByDescending(c => c.DataAbertura)
-                    .ToList();
-
-                return View(chamadosTecnico);
+                query = query.Where(c => c.TecnicoId == usuario.Id);
+            }
+            else if (!User.IsInRole("Administrador"))
+            {
+                query = query.Where(c => c.UsuarioId == usuario.Id);
             }
 
-            var meusChamados = _context.Chamados
-                .Where(c => c.UsuarioId == usuario.Id)
+            // TOTAIS DO DASHBOARD
+            // Calculados antes dos filtros
+            ViewBag.TotalAbertos =
+                query.Count(c => c.Status == "Aberto");
+
+            ViewBag.TotalAtendimento =
+                query.Count(c => c.Status == "Em atendimento");
+
+            ViewBag.TotalResolvidos =
+                query.Count(c => c.Status == "Resolvido");
+
+            ViewBag.TotalCriticos =
+                query.Count(c => c.Prioridade == "Crítica");
+
+            // FILTRO POR STATUS
+            if (!string.IsNullOrWhiteSpace(status))
+            {
+                query = query.Where(c => c.Status == status);
+            }
+
+            // FILTRO POR PRIORIDADE
+            if (!string.IsNullOrWhiteSpace(prioridade))
+            {
+                query = query.Where(c => c.Prioridade == prioridade);
+            }
+
+            // BUSCA POR TÍTULO OU ID
+            if (!string.IsNullOrWhiteSpace(busca))
+            {
+                busca = busca.Trim();
+
+                if (int.TryParse(busca.TrimStart('#'), out var id))
+                {
+                    query = query.Where(c =>
+                        c.Id == id ||
+                        c.Titulo.Contains(busca));
+                }
+                else
+                {
+                    query = query.Where(c =>
+                        c.Titulo.Contains(busca));
+                }
+            }
+
+            var chamados = query
                 .OrderByDescending(c => c.DataAbertura)
                 .ToList();
 
-            return View(meusChamados);
+            ViewBag.StatusFiltro = status;
+            ViewBag.PrioridadeFiltro = prioridade;
+            ViewBag.BuscaFiltro = busca;
+
+            return View(chamados);
         }
 
         // ABRIR TELA DE NOVO CHAMADO

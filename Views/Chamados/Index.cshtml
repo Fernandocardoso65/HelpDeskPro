@@ -1,14 +1,15 @@
 @model List<HelpDeskWeb.Models.Chamado>
 
 @{
-    var abertos = Model.Count(c => c.Status == "Aberto");
-    var atendimento = Model.Count(c => c.Status == "Em atendimento");
-    var resolvidos = Model.Count(c => c.Status == "Resolvido");
-    var criticos = Model.Count(c => c.Prioridade == "Crítica");
+    var abertos = ViewBag.TotalAbertos ?? 0;
+    var atendimento = ViewBag.TotalAtendimento ?? 0;
+    var resolvidos = ViewBag.TotalResolvidos ?? 0;
+    var criticos = ViewBag.TotalCriticos ?? 0;
 }
 
 <div class="mb-4">
     <h1 class="fw-bold mb-1">Dashboard Help Desk</h1>
+
     <p class="text-muted mb-0">
         Visão geral dos chamados e atendimentos
     </p>
@@ -20,8 +21,13 @@
     <div class="col-12 col-sm-6 col-lg-3">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body">
-                <h5 class="text-muted">Abertos</h5>
-                <h2 class="text-primary fw-bold">@abertos</h2>
+                <h5 class="text-muted">
+                    Abertos
+                </h5>
+
+                <h2 class="text-primary fw-bold">
+                    @abertos
+                </h2>
             </div>
         </div>
     </div>
@@ -29,8 +35,13 @@
     <div class="col-12 col-sm-6 col-lg-3">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body">
-                <h5 class="text-muted">Em atendimento</h5>
-                <h2 class="text-warning fw-bold">@atendimento</h2>
+                <h5 class="text-muted">
+                    Em atendimento
+                </h5>
+
+                <h2 class="text-warning fw-bold">
+                    @atendimento
+                </h2>
             </div>
         </div>
     </div>
@@ -38,8 +49,13 @@
     <div class="col-12 col-sm-6 col-lg-3">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body">
-                <h5 class="text-muted">Resolvidos</h5>
-                <h2 class="text-success fw-bold">@resolvidos</h2>
+                <h5 class="text-muted">
+                    Resolvidos
+                </h5>
+
+                <h2 class="text-success fw-bold">
+                    @resolvidos
+                </h2>
             </div>
         </div>
     </div>
@@ -47,40 +63,175 @@
     <div class="col-12 col-sm-6 col-lg-3">
         <div class="card shadow-sm border-0 h-100">
             <div class="card-body">
-                <h5 class="text-muted">Críticos</h5>
-                <h2 class="text-danger fw-bold">@criticos</h2>
+                <h5 class="text-muted">
+                    Críticos
+                </h5>
+
+                <h2 class="text-danger fw-bold">
+                    @criticos
+                </h2>
             </div>
         </div>
     </div>
 
 </div>
 
-<!-- CABEÇALHO DOS CHAMADOS -->
+<!-- CABEÇALHO -->
 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 
     <div>
-        <h2 class="fw-bold mb-0">Chamados</h2>
+        <h2 class="fw-bold mb-0">
+            Chamados
+        </h2>
+
         <small class="text-muted">
             Chamados registrados no sistema
         </small>
     </div>
 
-    @if (User.IsInRole("Usuario") || User.IsInRole("Administrador"))
+    @if (User.IsInRole("Usuario") ||
+         User.IsInRole("Administrador"))
     {
-        <a asp-action="Criar" class="btn btn-primary">
+        <a asp-action="Criar"
+           class="btn btn-primary">
             + Novo Chamado
         </a>
     }
 
 </div>
 
+<!-- FILTROS -->
+<div class="card shadow-sm border-0 mb-4">
+
+    <div class="card-body">
+
+        <form method="get"
+              asp-action="Index"
+              class="row g-3 align-items-end">
+
+            <!-- BUSCA -->
+            <div class="col-12 col-lg-4">
+
+                <label class="form-label fw-semibold">
+                    Buscar chamado
+                </label>
+
+                <input type="text"
+                       name="busca"
+                       value="@ViewBag.BuscaFiltro"
+                       class="form-control"
+                       placeholder="Título ou número do chamado">
+
+            </div>
+
+            <!-- STATUS -->
+            <div class="col-12 col-md-6 col-lg-3">
+
+                <label class="form-label fw-semibold">
+                    Status
+                </label>
+
+                <select name="status"
+                        class="form-select">
+
+                    <option value="">
+                        Todos
+                    </option>
+
+                    <option value="Aberto"
+                            selected="@(ViewBag.StatusFiltro == "Aberto")">
+                        Aberto
+                    </option>
+
+                    <option value="Em atendimento"
+                            selected="@(ViewBag.StatusFiltro == "Em atendimento")">
+                        Em atendimento
+                    </option>
+
+                    <option value="Resolvido"
+                            selected="@(ViewBag.StatusFiltro == "Resolvido")">
+                        Resolvido
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- PRIORIDADE -->
+            <div class="col-12 col-md-6 col-lg-3">
+
+                <label class="form-label fw-semibold">
+                    Prioridade
+                </label>
+
+                <select name="prioridade"
+                        class="form-select">
+
+                    <option value="">
+                        Todas
+                    </option>
+
+                    <option value="Baixa"
+                            selected="@(ViewBag.PrioridadeFiltro == "Baixa")">
+                        Baixa
+                    </option>
+
+                    <option value="Média"
+                            selected="@(ViewBag.PrioridadeFiltro == "Média")">
+                        Média
+                    </option>
+
+                    <option value="Alta"
+                            selected="@(ViewBag.PrioridadeFiltro == "Alta")">
+                        Alta
+                    </option>
+
+                    <option value="Crítica"
+                            selected="@(ViewBag.PrioridadeFiltro == "Crítica")">
+                        Crítica
+                    </option>
+
+                </select>
+
+            </div>
+
+            <!-- BOTÕES -->
+            <div class="col-12 col-lg-2">
+
+                <div class="d-grid gap-2">
+
+                    <button type="submit"
+                            class="btn btn-primary">
+                        Filtrar
+                    </button>
+
+                    <a asp-action="Index"
+                       class="btn btn-outline-secondary">
+                        Limpar
+                    </a>
+
+                </div>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</div>
+
 @if (!Model.Any())
 {
     <div class="alert alert-light border text-center py-5">
-        <h5>Nenhum chamado encontrado.</h5>
+
+        <h5>
+            Nenhum chamado encontrado.
+        </h5>
+
         <p class="text-muted mb-0">
-            Nenhum chamado foi registrado até o momento.
+            Nenhum chamado corresponde aos filtros selecionados.
         </p>
+
     </div>
 }
 else
@@ -95,13 +246,31 @@ else
                 <table class="table table-hover align-middle mb-0">
 
                     <thead class="table-light">
+
                         <tr>
-                            <th class="ps-4">ID</th>
-                            <th>Chamado</th>
-                            <th>Status</th>
-                            <th>Prioridade</th>
-                            <th class="text-end pe-4">Ações</th>
+
+                            <th class="ps-4">
+                                ID
+                            </th>
+
+                            <th>
+                                Chamado
+                            </th>
+
+                            <th>
+                                Status
+                            </th>
+
+                            <th>
+                                Prioridade
+                            </th>
+
+                            <th class="text-end pe-4">
+                                Ações
+                            </th>
+
                         </tr>
+
                     </thead>
 
                     <tbody>
@@ -118,7 +287,9 @@ else
                                     @chamado.Titulo
                                 </td>
 
+                                <!-- STATUS -->
                                 <td>
+
                                     @if (chamado.Status == "Aberto")
                                     {
                                         <span class="badge bg-primary">
@@ -137,9 +308,12 @@ else
                                             Resolvido
                                         </span>
                                     }
+
                                 </td>
 
+                                <!-- PRIORIDADE -->
                                 <td>
+
                                     @if (chamado.Prioridade == "Crítica")
                                     {
                                         <span class="badge bg-danger">
@@ -164,8 +338,10 @@ else
                                             Baixa
                                         </span>
                                     }
+
                                 </td>
 
+                                <!-- AÇÕES -->
                                 <td class="text-end pe-4">
 
                                     <a asp-action="Detalhes"
@@ -216,6 +392,7 @@ else
                     <div class="d-flex justify-content-between align-items-start gap-3 mb-3">
 
                         <div>
+
                             <small class="text-muted">
                                 Chamado #@chamado.Id
                             </small>
@@ -223,6 +400,7 @@ else
                             <h5 class="fw-bold mt-1 mb-0">
                                 @chamado.Titulo
                             </h5>
+
                         </div>
 
                         <span class="badge bg-secondary">
@@ -233,7 +411,9 @@ else
 
                     <div class="mb-3">
 
+                        <!-- STATUS -->
                         <div class="mb-2">
+
                             <span class="text-muted me-2">
                                 Status:
                             </span>
@@ -256,9 +436,12 @@ else
                                     Resolvido
                                 </span>
                             }
+
                         </div>
 
+                        <!-- PRIORIDADE -->
                         <div>
+
                             <span class="text-muted me-2">
                                 Prioridade:
                             </span>
@@ -287,10 +470,12 @@ else
                                     Baixa
                                 </span>
                             }
+
                         </div>
 
                     </div>
 
+                    <!-- AÇÕES MOBILE -->
                     <div class="d-grid gap-2">
 
                         <a asp-action="Detalhes"
@@ -304,19 +489,23 @@ else
                             <div class="row g-2">
 
                                 <div class="col-6">
+
                                     <a asp-action="Editar"
                                        asp-route-id="@chamado.Id"
                                        class="btn btn-outline-warning w-100">
                                         Editar
                                     </a>
+
                                 </div>
 
                                 <div class="col-6">
+
                                     <a asp-action="Excluir"
                                        asp-route-id="@chamado.Id"
                                        class="btn btn-outline-danger w-100">
                                         Excluir
                                     </a>
+
                                 </div>
 
                             </div>
