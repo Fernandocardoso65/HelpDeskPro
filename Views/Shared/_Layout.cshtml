@@ -15,14 +15,22 @@
 
 <body>
 
-<div class="d-flex">
+<div class="app-wrapper">
 
-    <div class="bg-dark text-white p-3 vh-100"
-         style="width: 240px; position: fixed;">
+    <aside id="sidebar" class="sidebar bg-dark text-white">
 
-        <h3 class="mb-4">
-            HelpDesk Pro
-        </h3>
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h3 class="m-0">
+                HelpDesk Pro
+            </h3>
+
+            <button
+                type="button"
+                class="btn-close btn-close-white d-md-none"
+                id="closeSidebar"
+                aria-label="Fechar menu">
+            </button>
+        </div>
 
         <hr />
 
@@ -64,28 +72,40 @@
 
         </ul>
 
-        <div style="position:absolute; bottom:20px;">
+        <div class="sidebar-footer">
             <small>
                 HelpDesk Pro v1.0
             </small>
         </div>
 
-    </div>
+    </aside>
 
+    <div id="sidebarOverlay" class="sidebar-overlay"></div>
 
-    <div style="margin-left:240px; width:100%;">
+    <div class="main-wrapper">
 
-        <nav class="navbar navbar-light bg-light shadow-sm px-4">
+        <nav class="navbar navbar-light bg-light shadow-sm px-3 px-md-4">
 
-            <span class="navbar-brand mb-0 h1">
-                Sistema de Atendimento de TI
-            </span>
+            <div class="d-flex align-items-center gap-2">
+
+                <button
+                    type="button"
+                    id="openSidebar"
+                    class="btn btn-outline-dark d-md-none">
+                    ☰
+                </button>
+
+                <span class="navbar-brand mb-0 h1">
+                    Sistema de Atendimento de TI
+                </span>
+
+            </div>
 
             @if (SignInManager.IsSignedIn(User))
             {
-                <div class="d-flex align-items-center gap-3">
+                <div class="user-area">
 
-                    <span>
+                    <span class="user-email">
                         @User.Identity?.Name
                     </span>
 
@@ -134,7 +154,7 @@
 
         </nav>
 
-        <main class="container-fluid p-4">
+        <main class="container-fluid main-content">
 
             @RenderBody()
 
@@ -147,6 +167,35 @@
 <script src="~/lib/jquery/dist/jquery.min.js"></script>
 <script src="~/lib/bootstrap/dist/js/bootstrap.bundle.min.js"></script>
 <script src="~/js/site.js" asp-append-version="true"></script>
+
+<script>
+    const sidebar = document.getElementById("sidebar");
+    const overlay = document.getElementById("sidebarOverlay");
+    const openSidebar = document.getElementById("openSidebar");
+    const closeSidebar = document.getElementById("closeSidebar");
+
+    function abrirMenu() {
+        sidebar.classList.add("sidebar-open");
+        overlay.classList.add("sidebar-overlay-open");
+    }
+
+    function fecharMenu() {
+        sidebar.classList.remove("sidebar-open");
+        overlay.classList.remove("sidebar-overlay-open");
+    }
+
+    if (openSidebar) {
+        openSidebar.addEventListener("click", abrirMenu);
+    }
+
+    if (closeSidebar) {
+        closeSidebar.addEventListener("click", fecharMenu);
+    }
+
+    if (overlay) {
+        overlay.addEventListener("click", fecharMenu);
+    }
+</script>
 
 @await RenderSectionAsync("Scripts", required: false)
 
