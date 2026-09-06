@@ -14,7 +14,6 @@
     </p>
 </div>
 
-
 <!-- CARDS DO DASHBOARD -->
 <div class="row g-3 mb-4">
 
@@ -56,7 +55,6 @@
 
 </div>
 
-
 <!-- CABEÇALHO DOS CHAMADOS -->
 <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
 
@@ -67,28 +65,27 @@
         </small>
     </div>
 
-    <a asp-action="Criar" class="btn btn-primary">
-        + Novo Chamado
-    </a>
+    @if (User.IsInRole("Usuario") || User.IsInRole("Administrador"))
+    {
+        <a asp-action="Criar" class="btn btn-primary">
+            + Novo Chamado
+        </a>
+    }
 
 </div>
-
 
 @if (!Model.Any())
 {
     <div class="alert alert-light border text-center py-5">
         <h5>Nenhum chamado encontrado.</h5>
         <p class="text-muted mb-0">
-            Crie um novo chamado para começar.
+            Nenhum chamado foi registrado até o momento.
         </p>
     </div>
 }
 else
 {
-
-    <!-- ===================================
-         DESKTOP / TABLET
-         =================================== -->
+    <!-- DESKTOP / TABLET -->
     <div class="d-none d-md-block">
 
         <div class="card shadow-sm border-0">
@@ -122,7 +119,6 @@ else
                                 </td>
 
                                 <td>
-
                                     @if (chamado.Status == "Aberto")
                                     {
                                         <span class="badge bg-primary">
@@ -141,11 +137,9 @@ else
                                             Resolvido
                                         </span>
                                     }
-
                                 </td>
 
                                 <td>
-
                                     @if (chamado.Prioridade == "Crítica")
                                     {
                                         <span class="badge bg-danger">
@@ -170,7 +164,6 @@ else
                                             Baixa
                                         </span>
                                     }
-
                                 </td>
 
                                 <td class="text-end pe-4">
@@ -187,11 +180,14 @@ else
                                         Editar
                                     </a>
 
-                                    <a asp-action="Excluir"
-                                       asp-route-id="@chamado.Id"
-                                       class="btn btn-sm btn-outline-danger">
-                                        Excluir
-                                    </a>
+                                    @if (User.IsInRole("Administrador"))
+                                    {
+                                        <a asp-action="Excluir"
+                                           asp-route-id="@chamado.Id"
+                                           class="btn btn-sm btn-outline-danger">
+                                            Excluir
+                                        </a>
+                                    }
 
                                 </td>
 
@@ -208,10 +204,7 @@ else
 
     </div>
 
-
-    <!-- ===================================
-         CELULAR
-         =================================== -->
+    <!-- MOBILE -->
     <div class="d-md-none">
 
         @foreach (var chamado in Model)
@@ -238,7 +231,6 @@ else
 
                     </div>
 
-
                     <div class="mb-3">
 
                         <div class="mb-2">
@@ -264,9 +256,7 @@ else
                                     Resolvido
                                 </span>
                             }
-
                         </div>
-
 
                         <div>
                             <span class="text-muted me-2">
@@ -297,11 +287,9 @@ else
                                     Baixa
                                 </span>
                             }
-
                         </div>
 
                     </div>
-
 
                     <div class="d-grid gap-2">
 
@@ -311,25 +299,36 @@ else
                             Ver detalhes
                         </a>
 
-                        <div class="row g-2">
+                        @if (User.IsInRole("Administrador"))
+                        {
+                            <div class="row g-2">
 
-                            <div class="col-6">
-                                <a asp-action="Editar"
-                                   asp-route-id="@chamado.Id"
-                                   class="btn btn-outline-warning w-100">
-                                    Editar
-                                </a>
+                                <div class="col-6">
+                                    <a asp-action="Editar"
+                                       asp-route-id="@chamado.Id"
+                                       class="btn btn-outline-warning w-100">
+                                        Editar
+                                    </a>
+                                </div>
+
+                                <div class="col-6">
+                                    <a asp-action="Excluir"
+                                       asp-route-id="@chamado.Id"
+                                       class="btn btn-outline-danger w-100">
+                                        Excluir
+                                    </a>
+                                </div>
+
                             </div>
-
-                            <div class="col-6">
-                                <a asp-action="Excluir"
-                                   asp-route-id="@chamado.Id"
-                                   class="btn btn-outline-danger w-100">
-                                    Excluir
-                                </a>
-                            </div>
-
-                        </div>
+                        }
+                        else
+                        {
+                            <a asp-action="Editar"
+                               asp-route-id="@chamado.Id"
+                               class="btn btn-outline-warning">
+                                Editar
+                            </a>
+                        }
 
                     </div>
 
