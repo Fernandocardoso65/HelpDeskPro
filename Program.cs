@@ -80,22 +80,54 @@ using (var scope = app.Services.CreateScope())
         }
     }
 
-    // USUÁRIO COMUM
-    var emailUsuario = "usuario@helpdesk.com";
+    // USUÁRIO DEMO
+    // Credenciais carregadas por variáveis de ambiente
+    var emailUsuario =
+        Environment.GetEnvironmentVariable("HELPDESK_USUARIO_EMAIL");
 
-    var usuarioComum =
-        await userManager.FindByEmailAsync(emailUsuario);
+    var senhaUsuario =
+        Environment.GetEnvironmentVariable("HELPDESK_USUARIO_PASSWORD");
 
-    if (usuarioComum != null)
+    if (!string.IsNullOrWhiteSpace(emailUsuario) &&
+        !string.IsNullOrWhiteSpace(senhaUsuario))
     {
-        if (!await userManager.IsInRoleAsync(
-                usuarioComum,
-                "Usuario"))
+        var usuario =
+            await userManager.FindByEmailAsync(emailUsuario);
+
+        if (usuario == null)
         {
-            await userManager.AddToRoleAsync(
-                usuarioComum,
-                "Usuario"
-            );
+            usuario = new IdentityUser
+            {
+                UserName = emailUsuario,
+                Email = emailUsuario,
+                EmailConfirmed = true
+            };
+
+            var resultadoUsuario =
+                await userManager.CreateAsync(
+                    usuario,
+                    senhaUsuario
+                );
+
+            if (resultadoUsuario.Succeeded)
+            {
+                await userManager.AddToRoleAsync(
+                    usuario,
+                    "Usuario"
+                );
+            }
+        }
+        else
+        {
+            if (!await userManager.IsInRoleAsync(
+                    usuario,
+                    "Usuario"))
+            {
+                await userManager.AddToRoleAsync(
+                    usuario,
+                    "Usuario"
+                );
+            }
         }
     }
 
