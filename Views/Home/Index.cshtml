@@ -1,8 +1,326 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@using HelpDeskWeb.Models
+
+@{
+    ViewData["Title"] = "Dashboard";
 }
 
-<div class="text-center">
-    <h1 class="display-4">Welcome</h1>
-    <p>Learn about <a href="https://learn.microsoft.com/aspnet/core">building Web apps with ASP.NET Core</a>.</p>
-</div>
+@if (User.Identity?.IsAuthenticated == true)
+{
+    var chamadosRecentes =
+        ViewBag.ChamadosRecentes as List<Chamado>
+        ?? new List<Chamado>();
+
+    <div class="container-fluid py-4">
+
+        <div class="mb-4">
+            <h1 class="fw-bold mb-1">Dashboard</h1>
+            <p class="text-muted mb-0">
+                Visão geral dos chamados e atendimentos
+            </p>
+        </div>
+
+        <div class="row g-3 mb-4">
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="text-muted small">
+                            Total de chamados
+                        </div>
+
+                        <div class="display-6 fw-bold">
+                            @ViewBag.TotalChamados
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="text-muted small">
+                            Abertos
+                        </div>
+
+                        <div class="display-6 fw-bold text-primary">
+                            @ViewBag.Abertos
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="text-muted small">
+                            Em atendimento
+                        </div>
+
+                        <div class="display-6 fw-bold text-warning">
+                            @ViewBag.EmAtendimento
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-6 col-xl-3">
+                <div class="card shadow-sm border-0 h-100">
+                    <div class="card-body">
+                        <div class="text-muted small">
+                            Resolvidos
+                        </div>
+
+                        <div class="display-6 fw-bold text-success">
+                            @ViewBag.Resolvidos
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="card shadow-sm border-0">
+
+            <div class="card-header bg-white py-3">
+                <div class="d-flex justify-content-between align-items-center">
+
+                    <div>
+                        <h5 class="mb-0 fw-bold">
+                            Chamados recentes
+                        </h5>
+
+                        <small class="text-muted">
+                            Últimos chamados registrados
+                        </small>
+                    </div>
+
+                    <a
+                        asp-controller="Chamados"
+                        asp-action="Index"
+                        class="btn btn-outline-primary btn-sm">
+                        Ver todos
+                    </a>
+
+                </div>
+            </div>
+
+            <div class="card-body p-0">
+
+                @if (chamadosRecentes.Any())
+                {
+                    <div class="table-responsive">
+
+                        <table class="table table-hover align-middle mb-0">
+
+                            <thead class="table-light">
+                                <tr>
+                                    <th class="ps-3">#</th>
+                                    <th>Chamado</th>
+                                    <th>Status</th>
+                                    <th>Prioridade</th>
+                                    <th>Data</th>
+                                    <th></th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                @foreach (var chamado in chamadosRecentes)
+                                {
+                                    <tr>
+
+                                        <td class="ps-3 fw-bold">
+                                            #@chamado.Id
+                                        </td>
+
+                                        <td>
+                                            @chamado.Titulo
+                                        </td>
+
+                                        <td>
+
+                                            @if (chamado.Status == "Aberto")
+                                            {
+                                                <span class="badge bg-primary">
+                                                    Aberto
+                                                </span>
+                                            }
+                                            else if (chamado.Status == "Em atendimento")
+                                            {
+                                                <span class="badge bg-warning text-dark">
+                                                    Em atendimento
+                                                </span>
+                                            }
+                                            else if (chamado.Status == "Resolvido")
+                                            {
+                                                <span class="badge bg-success">
+                                                    Resolvido
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">
+                                                    @chamado.Status
+                                                </span>
+                                            }
+
+                                        </td>
+
+                                        <td>
+
+                                            @if (chamado.Prioridade == "Alta")
+                                            {
+                                                <span class="badge bg-danger">
+                                                    Alta
+                                                </span>
+                                            }
+                                            else if (chamado.Prioridade == "Media" ||
+                                                     chamado.Prioridade == "Média")
+                                            {
+                                                <span class="badge bg-warning text-dark">
+                                                    Média
+                                                </span>
+                                            }
+                                            else
+                                            {
+                                                <span class="badge bg-secondary">
+                                                    @chamado.Prioridade
+                                                </span>
+                                            }
+
+                                        </td>
+
+                                        <td>
+                                            @chamado.DataAbertura.ToString("dd/MM/yyyy HH:mm")
+                                        </td>
+
+                                        <td class="text-end pe-3">
+
+                                            <a
+                                                asp-controller="Chamados"
+                                                asp-action="Detalhes"
+                                                asp-route-id="@chamado.Id"
+                                                class="btn btn-sm btn-outline-secondary">
+
+                                                Abrir
+
+                                            </a>
+
+                                        </td>
+
+                                    </tr>
+                                }
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+                }
+                else
+                {
+                    <div class="text-center py-5">
+
+                        <h5>Nenhum chamado encontrado</h5>
+
+                        <p class="text-muted">
+                            Os chamados aparecerão aqui quando forem criados.
+                        </p>
+
+                        @if (User.IsInRole("Usuario") ||
+                             User.IsInRole("Administrador"))
+                        {
+                            <a
+                                asp-controller="Chamados"
+                                asp-action="Criar"
+                                class="btn btn-primary">
+
+                                Abrir primeiro chamado
+
+                            </a>
+                        }
+
+                    </div>
+                }
+
+            </div>
+
+        </div>
+
+    </div>
+}
+else
+{
+    <div class="container py-5">
+
+        <div class="row align-items-center py-5">
+
+            <div class="col-lg-7">
+
+                <span class="badge bg-primary mb-3">
+                    HelpDesk Pro
+                </span>
+
+                <h1 class="display-4 fw-bold mb-3">
+                    Atendimento simples.
+                    <br />
+                    Chamados organizados.
+                </h1>
+
+                <p class="lead text-muted mb-4">
+                    Centralize solicitações de suporte,
+                    acompanhe atendimentos e mantenha
+                    todo o histórico da sua equipe em um só lugar.
+                </p>
+
+                <a
+                    asp-area="Identity"
+                    asp-page="/Account/Login"
+                    class="btn btn-primary btn-lg">
+
+                    Acessar HelpDesk
+
+                </a>
+
+            </div>
+
+            <div class="col-lg-5 mt-5 mt-lg-0">
+
+                <div class="card shadow border-0">
+
+                    <div class="card-body p-4">
+
+                        <h4 class="fw-bold mb-4">
+                            Tudo sob controle
+                        </h4>
+
+                        <div class="mb-3">
+                            ✓ Abertura de chamados
+                        </div>
+
+                        <div class="mb-3">
+                            ✓ Priorização de atendimento
+                        </div>
+
+                        <div class="mb-3">
+                            ✓ Atribuição de técnicos
+                        </div>
+
+                        <div class="mb-3">
+                            ✓ Histórico de interações
+                        </div>
+
+                        <div>
+                            ✓ Controle por perfil de usuário
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+}
