@@ -47,9 +47,15 @@ app.MapControllerRoute(
 app.MapRazorPages();
 
 
-// CRIAR ROLES E USUÁRIOS
+// CRIAR BANCO, ROLES E USUÁRIOS
 using (var scope = app.Services.CreateScope())
 {
+    // Aplicar automaticamente todas as migrations pendentes
+    var db =
+        scope.ServiceProvider.GetRequiredService<AppDbContext>();
+
+    await db.Database.MigrateAsync();
+
     var roleManager =
         scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
 
