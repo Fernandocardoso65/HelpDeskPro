@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using HelpDeskWeb.Data;
 using HelpDeskWeb.Models;
+using HelpDeskWeb.Helpers;
 
 namespace HelpDeskWeb.Controllers
 {
@@ -84,7 +85,7 @@ namespace HelpDeskWeb.Controllers
             }
 
             chamado.Status = "Aberto";
-            chamado.DataAbertura = DateTime.Now;
+            chamado.DataAbertura = HorarioBrasil.Agora();
 
             chamado.UsuarioId = usuario.Id;
             chamado.UsuarioEmail = usuario.Email;
@@ -204,7 +205,7 @@ namespace HelpDeskWeb.Controllers
             {
                 ChamadoId = chamado.Id,
                 Mensagem = mensagem.Trim(),
-                Data = DateTime.Now,
+                Data = HorarioBrasil.Agora(),
                 UsuarioId = usuario.Id,
                 UsuarioEmail = usuario.Email,
                 Perfil = perfil
@@ -297,7 +298,7 @@ namespace HelpDeskWeb.Controllers
                 if (chamadoBanco.Status == "Resolvido" &&
                     chamadoBanco.DataConclusao == null)
                 {
-                    chamadoBanco.DataConclusao = DateTime.Now;
+                    chamadoBanco.DataConclusao = HorarioBrasil.Agora();
                 }
 
                 if (chamadoBanco.Status != "Resolvido")
@@ -392,7 +393,7 @@ namespace HelpDeskWeb.Controllers
 
             if (status == "Resolvido")
             {
-                chamado.DataConclusao = DateTime.Now;
+                chamado.DataConclusao = HorarioBrasil.Agora();
             }
             else
             {

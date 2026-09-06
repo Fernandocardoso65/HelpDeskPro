@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using HelpDeskWeb.Helpers;
 
 namespace HelpDeskWeb.Models
 {
@@ -13,7 +14,7 @@ namespace HelpDeskWeb.Models
         [Required]
         public string Mensagem { get; set; } = string.Empty;
 
-        public DateTime Data { get; set; } = DateTime.Now;
+        public DateTime Data { get; set; } = HorarioBrasil.Agora();
 
         public string? UsuarioId { get; set; }
 

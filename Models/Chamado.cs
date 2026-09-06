@@ -1,5 +1,6 @@
 using System;
 using System.ComponentModel.DataAnnotations;
+using HelpDeskWeb.Helpers;
 
 namespace HelpDeskWeb.Models
 {
@@ -18,7 +19,7 @@ namespace HelpDeskWeb.Models
         [Required]
         public string Prioridade { get; set; } = string.Empty;
 
-        public DateTime DataAbertura { get; set; } = DateTime.Now;
+        public DateTime DataAbertura { get; set; } = HorarioBrasil.Agora();
 
         // USUÁRIO QUE ABRIU O CHAMADO
         public string? UsuarioId { get; set; }
