@@ -8,13 +8,20 @@ O HelpDesk Pro simula o fluxo de atendimento de uma central de Help Desk, permit
 https://helpdeskpro-production.up.railway.app/
 
 
+
+
+
 <img width="1908" height="999" alt="image" src="https://github.com/user-attachments/assets/237780a2-81a0-48e7-8311-2fa208130c45" />
+
 
 <img width="1908" height="960" alt="image" src="https://github.com/user-attachments/assets/9d9a0a09-02c7-48be-9228-82250ffeec55" />
 
+
 <img width="1908" height="960" alt="image" src="https://github.com/user-attachments/assets/4344a3f6-1071-4d1f-a3d7-731f2dd218a8" />
 
+
 <img width="1908" height="960" alt="image" src="https://github.com/user-attachments/assets/80ac0eac-209c-4d70-a39f-3768f9d103b2" />
+
 
 
 
