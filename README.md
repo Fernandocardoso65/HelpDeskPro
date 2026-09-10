@@ -16,7 +16,6 @@ https://helpdeskpro-production.up.railway.app/
 
 <img width="1908" height="960" alt="image" src="https://github.com/user-attachments/assets/80ac0eac-209c-4d70-a39f-3768f9d103b2" />
 
-<img width="1908" height="910" alt="image" src="https://github.com/user-attachments/assets/26e821e2-dd05-4580-b497-14b64b6975b8" />
 
 
 
