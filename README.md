@@ -1,6 +1,6 @@
 # 🎫 HelpDesk Pro
 
-https://helpdeskpro-production.up.railway.app?utm_source=chatgpt.com
+https://helpdeskpro-production.up.railway.app
 
 Sistema web de gerenciamento de chamados de TI desenvolvido com **C# e ASP.NET Core MVC**.
 
