@@ -5,6 +5,7 @@ Sistema web para **gerenciamento de chamados de suporte técnico**, desenvolvido
 O HelpDesk Pro simula o fluxo de atendimento de uma central de Help Desk, permitindo abertura, acompanhamento, atribuição e resolução de chamados de TI com diferentes níveis de acesso.
 
 🌐 **Aplicação publicada:**  
+
 https://helpdeskpro-production.up.railway.app/
 
 
