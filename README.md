@@ -420,4 +420,4 @@ O projeto foi desenvolvido de forma incremental, adicionando funcionalidades e c
 
 **Fernando Cardoso**
 
-Estudante de Segurança da Informação e desenvolvedor web com interesse em **desenvolvimento back-end, C#, .NET e construção de aplicações web**.
+
